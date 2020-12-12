@@ -12,14 +12,17 @@ import pandas as pd
 
 # read data file
 # ------------------------------------------------------------------------------
-df = pd.read_csv("Data.csv", index_col="Pokemon Id")
-pd.set_option("max_columns", None)
+df = pd.read_csv(
+    "nba_physiques.csv",
+    index_col=0,
+    dtype={"Year": "int"}
 )
 # manage data
-df = df[df["Alternate Form Name"].isna()]
-df["Generation"] = pd.factorize(df["Region of Origin"])[0]+1
-df["BMI"] = df["Pokemon Weight"] / ((df["Pokemon Height"])**2)
-df["Base Stat Total User"] = 1*df["Health Stat"] + 1*df["Attack Stat"] + 1*df["Defense Stat"] + 1*df["Special Attack Stat"] + 1*df["Special Defense Stat"] + 1*df["Speed Stat"]
+df = df.assign(bmi=df.weight / ((df.height / 100) ** 2))
+df = df.assign(ht_bins=pd.qcut(df.height, q=4))
+df = df[["Year", "height", "weight", "bmi",
+         "PER", "PTS", "pos_simple", "ht_bins"]]
+
 
 # Set up app
 # ------------------------------------------------------------------------------
@@ -42,7 +45,7 @@ app.layout = html.Div(className="", children=[
         className="header",
         style={"backgroundColor": "#3c6382"},
         children=[html.H2(
-            "DatavizCMI4",
+            "Stats on NBA players - Dash app example",
             style={
                 "color": "white",
                 "padding": "30px 0 30px 0",
@@ -57,14 +60,14 @@ app.layout = html.Div(className="", children=[
         # first dropdown selector
         dcc.Dropdown(
             id="x-dropdown",  # identifiant
-            value="Pokemon Height",  # default value
+            value="height",  # default value
             # all values in the menu
             options=[{"label": name, "value": name} for name in df.columns],
         ),
         # second dropdown selector
         dcc.Dropdown(
             id="y-dropdown",
-            value="Pokemon Weight",
+            value="weight",
             options=[{"label": name, "value": name} for name in df.columns],
         ),
         # a place for the plot with an id
@@ -78,7 +81,7 @@ app.layout = html.Div(className="", children=[
         # a new dropdown
         dcc.Dropdown(
             id="pivot-dropdown",
-            value="Pokemon height",
+            value="height",
             options=[{"label": name, "value": name} for name in df.columns],
         ),
         # a table for data
@@ -120,14 +123,15 @@ def display_graph(xvalue, yvalue):
     """
 
     figure = px.scatter(
-        data_frame=df_legendaires, 
-        x="Pokemon Height", y="BMI",
-        color="Primary Type",
-        marginal_x="histogram", 
-        marginal_y="histogram", 
+        df,
+        x=xvalue, y=yvalue,
+        color='pos_simple',
+        category_orders=dict(pos_simple=['PG', 'SG', 'SF', 'PF', 'C']),
+        marginal_x="histogram",
+        marginal_y="histogram",
+        animation_group="Year",
         template="plotly_white",
-        range_x=[0,8],
-        range_y=[0,160])
+    )
 
     return figure
 
@@ -136,7 +140,7 @@ def display_graph(xvalue, yvalue):
     [Output("pivot-table", "data"),
      Output("pivot-table", "columns")],
     [Input("pivot-dropdown", "value")]
-    )
+)
 def show_pivot_table(value):
     """ This function return a pivot Table """
 
