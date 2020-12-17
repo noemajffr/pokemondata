@@ -1,4 +1,4 @@
-# Projet Dataviz CMI 4
+# Projet Dataviz CMI 4 : PokemonData
 
 Cette application vous permet de classer les pokémons selon différents critères que vous devrez sélectionner, à savoir le type du pokémon, s'il faut inclure ou non les pokémons légendaires, et enfin ses stats de combat selon des coéfficients multiplicatifs. 
 
