@@ -7,4 +7,6 @@ Vous retrouverez également dans les Notebooks :
   - Un mini-jeu déterminant quel starter vous êtes selon votre date de naissance (qui correspondra au type) et votre région de naissance (qui correspondra à une région du monde pokémon et ainsi à une génération de pokémon). 
   - Le Notebook ayant servi de modèle pour le codage de l'application.
   
-  L'adresse Internet pour accéder à l'application : https://ludomathnono.herokuapp.com/
+  L'adresse du dépôt contenant l'ensemble du code et des données
+  
+  L'adresse de l'application en ligne : https://ludomathnono.herokuapp.com/
